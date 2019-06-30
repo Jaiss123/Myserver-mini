@@ -226,7 +226,63 @@ int EventLoop::createEventfd()
 
 **注意：**doPendingFunctors方法的实现，这里不是通过简单的遍历vector来调用回调，而是新建了一个vector，然后调用vector::swap方法将数组交换出来后再调用，这么做的目的是“减小临界区的长度和避免死锁”，在<<Linux多线程服务器端编程>>P295页有详细介绍。当然我们的mini-muduo目前还是单线程，影响不大。
 
+# 8 Myserver-mini-v1.8
+
+1. 选用timefd作为多线程服务器程序的定时器。sleep/alarm/usleep可能使用信号，在多线程程序中处理会十分复杂。nanosleep/clock_nanosleep是线程安全的，但是在非阻塞网络编程中，绝对不能让线程挂起的方式来等待一段时间。gettimer和timer_create也是用信号来提交超时，在多线程中会很麻烦。
+
+2. **timefd的优点：**把时间变成了一个文件描述符，该文件的定时器超时的那一刻变得可读，这样就可以使用select/poll/epoll进行监听，从而采用统一的方式来处理I/O事件和超时事件以前上个版本的eventfd事件。
+
+* timer_fd的API
+```cpp
+nt timerfd_create(int clockid, int flags) //创建一个定时器文件
+int timerfd_settime(int ufd, int flags, const struct itimerspec * utmr, struct itimerspec * otmr); //设置新的超时时间，并开始计时
+int close(int fd); //释放掉文件描述符
+```
+* 用户使用计时器的操作是通过EventLoop提供接口的：
+```cpp
+void* runAt(Timestamp when, IRun* pRun); //在指定的某个时刻调用函数
+void* runAfter(double delay, IRun* pRun); //等待一段时间后，调用函数
+void* runEvery(double interval, IRun* pRun); //以固定的时间间隔反复调用函数
+void cancelTimer(void* timerfd); //关闭一个Timer
+```
+3. **说说timer_fd是怎么工作的？**
+
+  timer_fd是一个计时器，在一个loop中我们可能需要多个计时器来进行定时的操作，或者计时的转换等等。我的设计是每一个loop中只添加一个timer_fd，用来存放所有的计时器的最早的那个时间，这么说其实很抽象。实际上像muduo一样，我们设计了一个队列timerqueue专门用来存放时间，在将时间插入timequeue的同时会通过wakeup()唤醒loop， 实时的更改计时器 timer_fd。
+  
+4. **timerqueue 的设计：使用set结构，使用二叉平衡树来管理未到期的时间，所有插入删除操作的复杂度为O(lgN)，同时维护一个最小堆，进行timer_fd的设定。**
+
+5. timer类：用来包装timerTamp，设计了run方法，用来回调.
 
 
+# 9 Myserver-mini-v1.9
+
+1. 引入了**线程池ThreadPool**，底层实现使用的是pthread线程库，线程池Thread_pool的设计另外两个类一是**Blockqueue（阻塞队列）**，二是Condition（条件变量）类。
+
+2. 其中BlockQueue是根据消费者-生产者模型设计的queue，使用模板泛化。具体的请看我的一篇博客：[使用无界缓冲区 BlockingQueue设计生产者消费者模式](https://blog.csdn.net/weixin_43819197/article/details/92800386)
+
+3. **Condition** 是条件变量类，底层时使用pthread库中的pthread_cond_wait 和pthread_cond_unlock 以及pthread_cond_signal来实现的，主要有两个方法一是wait(),用来等待信号的到来，用在任务队列为空的时候；方法二是 **notify()**，用来释放信号，用在任务队列>=1的时候。
+
+4. Thread：线程类是对pthread的封装，设计了start、run、gettid、globalrun几个接口
+
+* Task：任务类。这个类就是一个携带参数的回调。它的作用就是闭包(closure)，它是我们用来代替muduo里boost::function和boost:bind的。这个Task类不太具有通用性（不像BlockingQueue，范型实现），只是为了在本项目里使用的，Task只支持两种类型的回调，第一种是无参数的回调，被调用者只需要实现一个”void run0()“，第二种是有两个参数的回调，被调用者实现"void run2(const string&, void*)"。因为有了Task类，所有需要异步回调的地方都用它来实现了。后期可以通过增加run方法进行多种回调函数的设计，这也是本架构设计的不太合理的地方，无法进行泛型编程，这点没有bind好用。
+
+5. 之前的更改
+
+* 添加了一个sendInLoop方法，把原来send方法里的实现移动到了sendInLoop方法里，而send方法本身变成了一个外部接口的包装。根据调用send方法所在线程的不同，采取不同的策略，如果调用TcpConnection::send的线程刚好是IO线程，则立刻使用write将数据送出（当然是缓冲区为空的时候）。如果调用TcpConnection::send的线程是work线程(也就是后台处理线程)则只将要发送的信息通过Task对象丢到EventLoop的异步队列中，然后立刻返回。EventLoop随后会在IO线程回调到TcpConnetion::sendInLoop方法，这样做的目的是保证网络IO相关操作只在IO线程进行。
+
+* 在接到任务后不是立刻处理，而是将任务通过ThreadPool::addTask丢进线程池。
+
+* **EventLoop::queueInLoop**方法。这个方法的作用是将一个异步回调加入到待执行队列_pendingFunctors中，本版本对_pendingFunctors加了锁，这点很好理解，因为EventLoop::queueLoop经常被外部的其他非IO线程调用。第二个修改是添加了一定条件下的wakeup()唤醒。唤醒条件如下：不是I/O线程 || 是I/O线程在PendingFunctors中：
+```cpp
+if(!isInLoopThread() || _callingPendingFunctors)
+{
+    wakeup();
+}
+```
+
+* EventLoop::runInLoop方法，本版本新添加的方法，与queueInLoop方法非常相似，"runIn"和"queueIn"从名字的差异就可以理解，当外部调用runInLoop的时候，会判断当前是否为IO线程，如果是在IO线程，则立刻执行Task里的回调。否则通过调用queueInLoop将Task加入到异步队列，等待后续被调用。 runInLoop和 queueInLoop都是针对I/O线程进行设计的，旨让I/O操作全都在I/O线程运行，所以要么立即执行(当前线程为I/O线程)要么对列里面等着
 
 
+6. 为了更清晰的解释EventLoop在多线程环境下的逻辑，下面时序图表达的就是“在非IO线程里调用TcpConnection::send发送数据”这一动作引发的连锁调用。这一动作需要3个Loop来完成，涉及4个子调用过程。
+
+![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/2.png)
