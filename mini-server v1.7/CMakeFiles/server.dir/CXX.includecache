@@ -1,0 +1,208 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Acceptor.cpp
+arpa/inet.h
+-
+fcntl.h
+-
+errno.h
+-
+Acceptor.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Acceptor.h
+Channel.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+IAcceptorCallback.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IAcceptorCallback.h
+EventLoop.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.h
+iostream
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Acceptor.h
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+Define.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Define.h
+IChannelCallback.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IChannelCallback.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Buffer.cpp
+Buffer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Buffer.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Buffer.h
+string
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.cpp
+sys/epoll.h
+-
+Channel.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+IChannelCallback.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IChannelCallback.h
+EventLoop.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.h
+iostream
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Define.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EchoServer.cpp
+EchoServer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EchoServer.h
+TcpConnection.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpConnection.h
+iostream
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EchoServer.h
+IMuduoUser.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IMuduoUser.h
+TcpServer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpServer.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Epoll.cpp
+errno.h
+-
+Epoll.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Epoll.h
+Channel.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+Define.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Define.h
+iostream
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Epoll.h
+sys/epoll.h
+-
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+Define.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Define.h
+vector
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.cpp
+sys/eventfd.h
+-
+EventLoop.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.h
+Channel.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+Epoll.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Epoll.h
+unistd.h
+-
+iostream
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.h
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+IChannelCallback.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IChannelCallback.h
+IRun.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IRun.h
+vector
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IAcceptorCallback.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IChannelCallback.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IMuduoUser.h
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+string
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IRun.h
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpConnection.cpp
+errno.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+fcntl.h
+-
+unistd.h
+-
+TcpConnection.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpConnection.h
+Channel.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+EventLoop.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.h
+Define.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Define.h
+IMuduoUser.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IMuduoUser.h
+string.h
+-
+iostream
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpConnection.h
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+IChannelCallback.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IChannelCallback.h
+Buffer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Buffer.h
+IRun.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IRun.h
+string
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpServer.cpp
+errno.h
+-
+TcpServer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpServer.h
+Channel.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Channel.h
+Acceptor.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Acceptor.h
+TcpConnection.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpConnection.h
+vector
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpServer.h
+sys/epoll.h
+-
+Declear.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Declear.h
+Define.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/Define.h
+IAcceptorCallback.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IAcceptorCallback.h
+IMuduoUser.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/IMuduoUser.h
+map
+-
+
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/main.cpp
+TcpServer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/TcpServer.h
+EventLoop.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EventLoop.h
+EchoServer.h
+/mnt/hgfs/Ubuntu/Myserver/mini-server v1.7/EchoServer.h
+
