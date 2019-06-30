@@ -224,13 +224,13 @@ int EventLoop::createEventfd()
 
 4. 现在重新理顺一下EventLoop::queueLoop()方法的实现，这个方法其实就是先将一个代表回调的IRun* 放入到EventLoop的vector中保存，然后就触发eventfd的事件，本次循环完毕，当下次 EventLoop::loop 循环到epoll_wait时，会因为eventfd的触发而返回，这时eventfd对应的Channel会被通知，进而通知到EventLoop::handleRead 方法，我们在里面把事件读出来，这样确保事件只触发一次。EventLoop::loop循环会继续调用到doPendingFunctors() 方法，这里面遍历保存 IRun* 的vector，于是所有异步事件就开始处理了。
 
-**注意：**doPendingFunctors方法的实现，这里不是通过简单的遍历vector来调用回调，而是新建了一个vector，然后调用vector::swap方法将数组交换出来后再调用，这么做的目的是“减小临界区的长度和避免死锁”，在<<Linux多线程服务器端编程>>P295页有详细介绍。当然我们的mini-muduo目前还是单线程，影响不大。
+ ** 注意：** doPendingFunctors方法的实现，这里不是通过简单的遍历vector来调用回调，而是新建了一个vector，然后调用vector::swap方法将数组交换出来后再调用，这么做的目的是“减小临界区的长度和避免死锁”，在<<Linux多线程服务器端编程>>P295页有详细介绍。当然我们的mini-muduo目前还是单线程，影响不大。
 
 # 8 Myserver-mini-v1.8
 
 1. 选用timefd作为多线程服务器程序的定时器。sleep/alarm/usleep可能使用信号，在多线程程序中处理会十分复杂。nanosleep/clock_nanosleep是线程安全的，但是在非阻塞网络编程中，绝对不能让线程挂起的方式来等待一段时间。gettimer和timer_create也是用信号来提交超时，在多线程中会很麻烦。
 
-2. **timefd的优点：**把时间变成了一个文件描述符，该文件的定时器超时的那一刻变得可读，这样就可以使用select/poll/epoll进行监听，从而采用统一的方式来处理I/O事件和超时事件以前上个版本的eventfd事件。
+2.  ** timefd的优点: ** 把时间变成了一个文件描述符，该文件的定时器超时的那一刻变得可读，这样就可以使用select/poll/epoll进行监听，从而采用统一的方式来处理I/O事件和超时事件以前上个版本的eventfd事件。
 
 * timer_fd的API
 ```cpp
