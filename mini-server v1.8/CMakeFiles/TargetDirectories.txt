@@ -1,0 +1,3 @@
+/mnt/hgfs/Ubuntu/Myserver/mini-server-v1.8/CMakeFiles/rebuild_cache.dir
+/mnt/hgfs/Ubuntu/Myserver/mini-server-v1.8/CMakeFiles/server.dir
+/mnt/hgfs/Ubuntu/Myserver/mini-server-v1.8/CMakeFiles/edit_cache.dir
