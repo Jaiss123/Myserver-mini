@@ -289,6 +289,12 @@ if(!isInLoopThread() || _callingPendingFunctors)
 
 #  Myserver-mini-v2.0
 
-1. 前面已经搭建好了一个回声服务器，接下来进行HTTP服务器HTTPsever的实现。首先我们得先明白HTTP的请求和回应原理。我使用 Wireshark 对本机对应端口的HTTP进行了抓包，可以看到如下：
+1. 前面已经搭建好了一个回声服务器，接下来进行HTTP服务器HTTPsever的实现。首先我们得先明白HTTP的请求和回应原理。我使用 Wireshark 对本机对应端口的HTTP进行了抓包，可以看到如下：（相关的HTTP请求和响应知识请看博客：[网络编程-HTTP协议](https://blog.csdn.net/weixin_43819197/article/details/93135155)）
 
+![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/http-request.png)
 
+![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/http-reponse.png)
+
+2. HttpRequest 是HTTP请求封装类；里面对http请求的请求行、请求头部进行了封装。HttpResponse 是对响应类的封装。具体的信息请看代码吧，主要是记录一些方法，路径，报头啊之类的信息。
+
+3. HTTP协议的解析与请求在 parseRequest() 方法和appendToBuffer() 方法中，具体的请求内容写到了 TcpServer中的dohttprequest()方法中。
