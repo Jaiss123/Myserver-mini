@@ -23,7 +23,7 @@
 ![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/1.png)
 
 
-# 0 Myserver-mini-v1.0
+#  Myserver-mini-v1.0
 
 1. 使用 **epoll/无阻塞**的方式实现了一个echosever
 
@@ -39,11 +39,11 @@ int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout
 ```
 使用fcnt将socket设置成无阻塞模式
 
-# 1 Myserver-mini-v1.1
+#  Myserver-mini-v1.1
 
 1. 添加了**Tcpserver**类，用来对socket的`bind，listen和accept`进行封装。完成对reactor模式构建的第一步。
 
-# 2 Myserver-mini-v1.2
+#  Myserver-mini-v1.2
 
 1. 介绍一下`Channel`类，先看其声明，这里特别要注意`events_`和`revents_`，前者是要关注的事件，后者是发生的事件，不仔细看容易混淆。名字的来源是poll(2)的`struct pollfd`。
 
@@ -59,7 +59,7 @@ int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout
 ```
 添加的epoll_event结构体中传递的是channel* 指针，而不是fd，传什么都行，data是一个union，这样做就是为了发生事件时，可以直接调用channel
 
-# 3 Myserver-mini-v1.3
+#  Myserver-mini-v1.3
 
 1. 本版本添加了两个类 `Acceptor` 和 `Tcpconnection` 两个类，`Acceptor` 用来处理来自 `server` 的连接请求以及连接操作，`Tcpconnection` 用来处理来自客户端client 的请求和操作。
 
@@ -69,7 +69,7 @@ int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout
 
 **总结：** 该版本目前已经能够将最基本的 reactor 模型建立出来了，之后再将 epoll 和 Tcpserver 中的 loop 分离开来
 
-# 4 Myserver-mini-v1.4
+#  Myserver-mini-v1.4
 
 1. 这个版本最最要的是加入了两个类**EventLoop** 和 **Epoll**，这两个类的加入就把我们之前I/O服用的最基本的流程全都拆成一块一块的了，更加的便于维护，程序代码逻辑也就相对清晰了。
 
@@ -79,7 +79,7 @@ int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout
 
 * **Epoll** 类的作用是包装 **epoll** 文件描述符，它最重要的成员变量是一个 **epoll** 文件描述符，最重要的两个方法是 **poll** 和 **update**。poll 方法包装了**epoll_wait**，在 **epoll** 描述符上等待事件的发生，当有事件发生后将新建的**Channel** 填充到 **vector** 中，**update** 方法包装了 **epoll_ctl**，用来在 epoll 文件描述符上添加/修改/删除事件。update接收一个 Channel 作为参数，通过这个 Channel 可以获得要注册的事件(**Channel::getEvents()**方法)。以后所有涉及 epoll 描述符的操作都通过 **Epoll** 的这两个方法来完成。**EventLoop** 本来是应该包括一个 epoll 描述符的，loop 方法通过一个循环来调用 epoll_wait，而现在 epoll 描述符在**Epoll**中，所以** EventLoop** 只需要包含一个 Epoll 成员变量即可。EventLoop 在循环中只需要调用 Epoll::poll() 方法就可以获得Channel列表，不需要直接调用 epoll_wait 了。
 
-# 5 Myserver-mini-v1.5
+#  Myserver-mini-v1.5
 
 1. 增加了基类 **IMuduoUser**，代表该库的用户，其中EchoSever代表这个类的用户，用户关心的是接到客户端的数据后如何处理，然后返回什么内容给客户端。 而库要做的是顺利接收客户端数据，并将收到的数据送给用户处理，同时在用户发出发送指令后能将数据完整的发送给客户端。作为 mini-server 的用户，必须实现IMuduoUser接口，这个接口是网络库和用户之间的桥梁。
 
@@ -87,7 +87,7 @@ int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout
 
 2. 因为响应请求的过程从**TcpConnection**移动到了**EchoServer**中，所以**TcpConnection**也做了相应更改，在原来的onIn方法里不再直接调用write将数据传回，而是在其中调用了其保存的**IMuduoUser::onMessage**方法将数据传递给了Muduo网络库的真正用户。同时**TcpConnection**增加了一个send方法，这个方法包装了write操作，提供给网络库的用户来使用。**onMessage()**方法的参数里会传递**TcpConnection** 给用户，用户可以自行决定是否发送数据。
 
-# 6 Myserver-mini-v1.6
+#  Myserver-mini-v1.6
 
 1. 在tcp的通信过程中，内核其实为tcp维护着一个缓冲区 当调用**write/send**时，会向内核缓冲区中写入数据，内核和tcp协议栈负责将缓冲区中的数据发送到指定<ip，port>的目标位置。 当有数据到达内核的tcp缓冲区中，如果开启了对套接字可读事件的监听，那么内核会让套接字变为可读状态，从而从poll函数中返回，调用read/recv进行读操作。
 
@@ -145,7 +145,7 @@ void TcpConnection::handleRead()
 ```
 当从内核缓存read到一些数据时，我们要把读到的数据append到应用层缓冲区_inbuf末尾，然后可以调用用户的处理函数 onMessage() 对接收到的数据进行处理。
 
-# 7 Myserver-mini-v1.7
+#  Myserver-mini-v1.7
 
 1. 1.7版本在IMuduoUser中增加了onWriteComplate回调。这样当用户一次传送大量数据到网络库时，用户会在数据发送完成后收到通知。
 
@@ -224,9 +224,9 @@ int EventLoop::createEventfd()
 
 4. 现在重新理顺一下EventLoop::queueLoop()方法的实现，这个方法其实就是先将一个代表回调的IRun* 放入到EventLoop的vector中保存，然后就触发eventfd的事件，本次循环完毕，当下次 EventLoop::loop 循环到epoll_wait时，会因为eventfd的触发而返回，这时eventfd对应的Channel会被通知，进而通知到EventLoop::handleRead 方法，我们在里面把事件读出来，这样确保事件只触发一次。EventLoop::loop循环会继续调用到doPendingFunctors() 方法，这里面遍历保存 IRun* 的vector，于是所有异步事件就开始处理了。
 
- ** 注意：** doPendingFunctors方法的实现，这里不是通过简单的遍历vector来调用回调，而是新建了一个vector，然后调用vector::swap方法将数组交换出来后再调用，这么做的目的是“减小临界区的长度和避免死锁”，在<<Linux多线程服务器端编程>>P295页有详细介绍。当然我们的mini-muduo目前还是单线程，影响不大。
+ **注意：doPendingFunctors方法的实现，这里不是通过简单的遍历vector来调用回调，而是新建了一个vector，然后调用vector::swap方法将数组交换出来后再调用，这么做的目的是“减小临界区的长度和避免死锁”，在<<Linux多线程服务器端编程>>P295页有详细介绍。当然我们的mini-muduo目前还是单线程，影响不大。
 
-# 8 Myserver-mini-v1.8
+#  Myserver-mini-v1.8
 
 1. 选用timefd作为多线程服务器程序的定时器。sleep/alarm/usleep可能使用信号，在多线程程序中处理会十分复杂。nanosleep/clock_nanosleep是线程安全的，但是在非阻塞网络编程中，绝对不能让线程挂起的方式来等待一段时间。gettimer和timer_create也是用信号来提交超时，在多线程中会很麻烦。
 
@@ -254,7 +254,7 @@ void cancelTimer(void* timerfd); //关闭一个Timer
 5. timer类：用来包装timerTamp，设计了run方法，用来回调.
 
 
-# 9 Myserver-mini-v1.9
+#  Myserver-mini-v1.9
 
 1. 引入了**线程池ThreadPool**，底层实现使用的是pthread线程库，线程池Thread_pool的设计另外两个类一是**Blockqueue（阻塞队列）**，二是Condition（条件变量）类。
 
@@ -286,3 +286,9 @@ if(!isInLoopThread() || _callingPendingFunctors)
 6. 为了更清晰的解释EventLoop在多线程环境下的逻辑，下面时序图表达的就是“在非IO线程里调用TcpConnection::send发送数据”这一动作引发的连锁调用。这一动作需要3个Loop来完成，涉及4个子调用过程。
 
 ![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/2.png)
+
+#  Myserver-mini-v2.0
+
+1. 前面已经搭建好了一个回声服务器，接下来进行HTTP服务器HTTPsever的实现。首先我们得先明白HTTP的请求和回应原理。我使用 Wireshark 对本机对应端口的HTTP进行了抓包，可以看到如下：
+
+
