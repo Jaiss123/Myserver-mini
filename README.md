@@ -5,6 +5,15 @@
 
 看完muduo网络库的我在仰望大佬的同时，深深的感觉到了与大佬的差距，怒从零写一个server！！！！希望可以在复现muduo库主要功能的同时对其进行改进。
 
+#  HttpSever最终版本
+
+## 运行环境
+* CentOS7
+* Complier: g++ 4.8
+* cmake 3.12
+
+## 
+
 # 前言
 
 前面服务器版本的测试均采用统一的客户端client 和 回声服务端server 编译：echo_client.cpp，直接执行可执行文件 ./client 即可。
@@ -297,4 +306,4 @@ if(!isInLoopThread() || _callingPendingFunctors)
 
 2. HttpRequest 是HTTP请求封装类；里面对http请求的请求行、请求头部进行了封装。HttpResponse 是对响应类的封装。具体的信息请看代码吧，主要是记录一些方法，路径，报头啊之类的信息。
 
-3. HTTP协议的解析与请求在 parseRequest() 方法和appendToBuffer() 方法中，具体的请求内容写到了 TcpServer中的dohttprequest()方法中。
+3. HTTP协议的解析与请求在 parseRequest() 方法和appendToBuffer() 方法中，具体的请求内容写到了 TcpServer中的dohttprequest()方法中
