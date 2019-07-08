@@ -12,7 +12,13 @@
 * Complier: g++ 4.8
 * cmake 3.12
 
-## 
+## 多线程Reactor模型
+![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/reactor.png)
+
+## webbench测试结果
+具体测试方法...后补
+![Image_text](https://github.com/Jaiss123/Myserver-mini/blob/master/webbench.png)
+
 
 # 前言
 
